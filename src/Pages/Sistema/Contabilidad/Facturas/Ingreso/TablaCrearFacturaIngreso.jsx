@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CustomTable from "@/Components/Custom/CustomTable";
 import { useSnackbar } from "@/Context/SnackbarContext";
-import { useAuth } from "@/Context/AuthContext";
+//import { useAuth } from "@/Context/AuthContext";
 import { tableCellPropsCenter } from "@/Components/Custom/CustomBoxStyles";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -33,7 +33,7 @@ function TablaFacturaIngresos({
   setTotal,
   setVerificacionDataConOC,
 }) {
-  const { getConfig } = useAuth();
+ // const { getConfig } = useAuth();
   const [data, setData] = useState(agencias);
   const { showSnackbar } = useSnackbar();
   const [tempOrdenDeCompraNumber, setTempOrdenDeCompraNumber] = useState("");

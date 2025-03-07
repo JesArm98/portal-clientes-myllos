@@ -24,15 +24,15 @@ import {
   ListItem,
   Typography,
   List,
+  TextField,
 } from "@mui/material";
-import { useAuth } from "@/Context/AuthContext";
+//import { useAuth } from "@/Context/AuthContext";
 import ConceptosIngresos from "../Ingreso/ConceptosIngresos";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import TablaFacturaIngresos from "./TablaCrearFacturaIngreso";
-import { InsertDriveFile } from "@mui/icons-material";
-import DragAndDropArea from "../Ingreso/DragAndDropArea";
 import PreviewDialog from "@/Components/Custom/PreviewDialog";
 import CustomDialog from "@/Components/Custom/CustomDialog";
+import { Form } from "react-hook-form";
+import AddressDialog from "./AddressDialog";
 
 const URL = import.meta.env.VITE_API_URL;
 
@@ -62,8 +62,13 @@ function ComplementosFacturas() {
   const [validados, setValidados] = useState(false);
   const [conceptos, setConceptos] = useState();
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [openAddressDialog, setOpenAddressDialog] = useState(false);
+const [addressFormData, setAddressFormData] = useState(null);
+const [isEditingAddress, setIsEditingAddress] = useState(false);
+
   const navigate = useNavigate();
-  const { getConfig } = useAuth();
+ // const { getConfig } = useAuth();
 
   console.log(invalidos);
 
@@ -430,33 +435,90 @@ function ComplementosFacturas() {
     }
   };
 
-  const handleCrear = async () => {
-    setLoading(true);
-    const config = getConfig();
-    const data = verificacionDataConOC ?? VerificacionData;
-    setLoading(true);
+  const handleSubmitModalPass = async (event) => {
+    event.preventDefault();
+    setErrorModal("");
+
+    const URL = import.meta.env.VITE_API_URL;
+
     try {
-      const response = await axios.post(
-        `https://${URL}/WS/TuvanosaProveedores/Api/ComplementoPago/CreateComplementoPago`,
-        data,
-        config
+      await axios.post(
+        `https://${URL}/WS/TuvanosaSeguridad/Api/AuthProveedor/ForgetPassword`,
+        {
+          correo: correoModal,
+        }
       );
 
-      // Verificar el código de estado
-      if (response.status !== 200) {
-        throw new Error(`Error en la solicitud: ${response.statusText}`);
-      }
-
-      // En axios, la respuesta está en response.data
-      console.log(response.data);
-      showSnackbar(`${response.data}`, "success");
+      setOpenModal(false);
+      setOpenSnack(true);
+      setCorreoModal("");
     } catch (error) {
-      console.error("Error al enviar los datos:", error);
-    } finally {
-      setLoading(false);
+      if (error.response) {
+        setErrorModal(`${error.response.data}`);
+        setOpenSnackError(true);
+      } else {
+        setErrorModal("Error al realizar la solicitud (500)");
+        setOpenSnackError(true);
+      }
+    }
+  };
 
-      handleOnCloseCrear();
-      setContador(contador + 1);
+  const handleOpenAddressDialog = (address = null) => {
+    if (address) {
+      setAddressFormData(address);
+      setIsEditingAddress(true);
+    } else {
+      setAddressFormData(null);
+      setIsEditingAddress(false);
+    }
+    setOpenAddressDialog(true);
+  };
+  
+  const handleCloseAddressDialog = () => {
+    setOpenAddressDialog(false);
+    setAddressFormData(null);
+    setIsEditingAddress(false);
+  };
+  
+  const handleSubmitAddress = async (data) => {
+    const URL = import.meta.env.VITE_API_URL;
+    const config = getConfig();
+    
+    try {
+      let response;
+      if (isEditingAddress) {
+        // Update existing address
+        response = await axios.put(
+          `https://${URL}/WS/TuvanosaProveedores/Api/Direcciones/UpdateDireccion`,
+          {
+            ...data,
+            id: addressFormData.id // Include the ID for updates
+          },
+          config
+        );
+        showSnackbar("Dirección actualizada correctamente", "success");
+      } else {
+        // Create new address
+        response = await axios.post(
+          `https://${URL}/WS/TuvanosaProveedores/Api/Direcciones/CreateDireccion`,
+          data,
+          config
+        );
+        showSnackbar("Dirección creada correctamente", "success");
+      }
+      
+      // Refresh data or update state as needed
+      // You might want to refresh your data here
+      // setContador(contador + 1);  // If you have this pattern to refresh data
+      
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        showSnackbar(`Error: ${error.response.data}`, "error");
+      } else {
+        showSnackbar("Error al procesar la solicitud", "error");
+      }
+      throw error;
     }
   };
 
@@ -539,7 +601,7 @@ function ComplementosFacturas() {
             </Button>
             <Button
               color="primary"
-              onClick={() => setOpenDialog(true)}
+              onClick={() => handleOpenAddressDialog()}
               startIcon={<AddIcon />}
             >
               {isMobile ? "" : "Agregar"}
@@ -554,131 +616,17 @@ function ComplementosFacturas() {
         )}
       />
 
-      {/*Crear Factura*/}
-      <Dialog
-        open={openDialog}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{
-          style: {
-            borderRadius: 16,
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            bgcolor: "primary.main",
-            color: "common.white",
-            py: 2,
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          Crear Complemento
-        </DialogTitle>
-
-        <HighlightOffIcon
-          sx={{
-            position: "absolute",
-            zIndex: 13,
-            color: "white",
-            right: 18,
-            top: 18,
-            cursor: "pointer",
-            transition: "transform 0.2s ease-in-out",
-            "&:hover": {
-              transform: "scale(1.2)",
-            },
-          }}
-          variant="contained"
-          onClick={handleOnCloseCrear}
-        />
-
-        {!VerificacionData && base64Files.length > 0 && (
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
-              {base64Files.length} XML seleccionado
-              {base64Files.length !== 1 ? "s" : ""}
-            </Typography>
-            <List
-              sx={{
-                bgcolor: "grey.100",
-                borderRadius: 2,
-                p: 2,
-                maxHeight: "240px",
-                overflowY: base64Files.length > 5 ? "auto" : "visible",
-              }}
-            >
-              {base64Files.map((archivo, index) => (
-                <ListItem key={index} sx={{ py: 1 }}>
-                  <ListItemIcon>
-                    <InsertDriveFile color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={archivo.nombreArchivo}
-                    primaryTypographyProps={{ fontWeight: "medium" }}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
-
-        {!VerificacionData && (
-          <DragAndDropArea
-            onFileSelect={(files) => handleFileUpload({ target: { files } })}
-            loading={loading}
-          />
-        )}
-
-        {loading && (
-          <Backdrop open={loading} sx={{ zIndex: 9999, color: "#fff" }}>
-            <CircularProgress color="inherit" />
-          </Backdrop>
-        )}
-
-        {VerificacionData && (
-          <Box sx={{ width: "96%", margin: "0 auto", mb: 3 }}>
-            <TablaFacturaIngresos
-              agencias={VerificacionData}
-              setInvalidos={setInvalidos}
-              setValidadaCount={setValidadaCount}
-              total={total}
-              setTotal={setTotal}
-              setVerificacionDataConOC={setVerificacionDataConOC}
-            />
-          </Box>
-        )}
-
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={
-              loading ||
-              base64Files.length === 0 ||
-              (validados && validadaCount <= 0)
-            }
-            onClick={validados ? handleCrear : handleValidar}
-            sx={{
-              fontWeight: "bold",
-              px: 2,
-
-              borderRadius: 2,
-              "&:disabled": {
-                bgcolor: "action.disabledBackground",
-                color: "action.disabled",
-              },
-            }}
-          >
-            {validados ? "Subir validos" : "Validar"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddressDialog
+  open={openAddressDialog}
+  onClose={handleCloseAddressDialog}
+  onSubmit={handleSubmitAddress}
+  initialValues={addressFormData}
+  isEditing={isEditingAddress}
+  title={isEditingAddress ? "Editar Dirección" : "Registro de Direcciones"}
+/>
 
       {/* PDF DIALOG */}
-      {PDF ? (
+      {PDF && (
         <PreviewDialog
           previewData={PDF}
           transitionTimeout={400}
@@ -688,21 +636,7 @@ function ComplementosFacturas() {
             setPDF("");
           }}
         />
-      ) : null}
-
-      {/*Conceptos*/}
-      <CustomDialog
-        title={"Facturas del complemento"}
-        transitionTimeout={400}
-        open={conceptosDialogOpen}
-        onPdfPreview={true}
-        paddingContent={0}
-        onClose={() => setConceptosDialogOpen(false)}
-        width="md"
-        fullWidth
-      >
-        <ConceptosIngresos conceptos={conceptos} />
-      </CustomDialog>
+      )}
     </Box>
   );
 }

@@ -16,7 +16,7 @@ import { useSnackbar } from "@/Context/SnackbarContext";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { useAuth } from "@/Context/AuthContext";
+//import { useAuth } from "@/Context/AuthContext";
 
 const URL = import.meta.env.VITE_API_URL;
 
@@ -35,7 +35,7 @@ const DialogoCambiarOC = ({
   const [disabledButtonOC, setDisabledButtonOC] = useState(false);
   const { showSnackbar } = useSnackbar();
 
-  const { getConfig } = useAuth();
+  //const { getConfig } = useAuth();
 
   const formatCurrency = useMemo(
     () => (value) =>

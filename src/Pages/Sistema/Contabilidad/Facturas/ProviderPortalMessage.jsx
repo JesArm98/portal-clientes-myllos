@@ -2,9 +2,7 @@ import React from "react";
 import {
   Box,
   Typography,
-  Container,
   Paper,
-  Button,
   List,
   ListItem,
   ListItemIcon,
@@ -22,9 +20,9 @@ const ProviderPortalMessage = () => {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#f4f6f9",
+        margin:"auto"
       }}
     >
-      <Container maxWidth="md">
         <Paper
           elevation={3}
           sx={{
@@ -44,7 +42,7 @@ const ProviderPortalMessage = () => {
               fontWeight: "bold",
             }}
           >
-            Nuevo Portal de Proveedores Tuvanosa
+            Portal clientes de Operadora de Servicios Myllos
           </Typography>
 
           <Typography
@@ -55,9 +53,7 @@ const ProviderPortalMessage = () => {
               color: "#555",
             }}
           >
-            Estimados Proveedores, nos complace informarle que Tuvanosa ha
-            implementado un nuevo Portal de Proveedores con el objetivo de
-            modernizar y optimizar nuestra comunicación y procesos de gestión.
+            Estimados clientes, nos complace informarle que Myllos ha implementado un portal de Clientes con el objetivo de modernizar y optimizar nuestra comunicación y procesos de gestión.
           </Typography>
 
           <Typography
@@ -68,25 +64,10 @@ const ProviderPortalMessage = () => {
               fontWeight: "bold",
             }}
           >
-            Información Importante sobre el Nuevo Portal
+            Información importante sobre portal:
           </Typography>
 
           <List>
-            <ListItem>
-              <ListItemIcon>
-                <DoNotDisturbIcon color="error" />
-              </ListItemIcon>
-              <ListItemText
-                primary="Credenciales de Acceso"
-                secondary="Las credenciales anteriores no son válidas en este nuevo portal."
-                secondaryTypographyProps={{
-                  style: {
-                    color: "red", // Cambia el color a rojo
-                    fontWeight: "bold", // Aplica negritas
-                  },
-                }}
-              />
-            </ListItem>
             <ListItem>
               <ListItemIcon>
                 <CheckCircleOutlineIcon color="primary" />
@@ -123,7 +104,7 @@ const ProviderPortalMessage = () => {
             sx={{
               marginTop: "1.5rem",
               textAlign: "center",
-              backgroundColor: "#f0f4f8",
+              border:"1px solid #3DC2CF",
               padding: "1rem",
               borderRadius: "8px",
               width: "fit-content",
@@ -140,12 +121,12 @@ const ProviderPortalMessage = () => {
               }}
             >
               <EmailIcon sx={{ marginRight: "0.5rem" }} />
-              Soporte:{" "}
+              Soporte: {" "}
               <a
-                href="mailto:innovacion@tuvanosa.com"
+                href="mailto:armando.aramburo75@gmail.com"
                 style={{ textDecoration: "none" }}
               >
-                innovacion@tuvanosa.com
+                armando.aramburo75@gmail.com
               </a>
             </Typography>
           </Box>
@@ -163,7 +144,6 @@ const ProviderPortalMessage = () => {
             reservados.
           </Typography>
         </Paper>
-      </Container>
     </Box>
   );
 };

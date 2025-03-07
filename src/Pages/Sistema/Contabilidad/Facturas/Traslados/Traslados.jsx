@@ -7,7 +7,7 @@ import IconButtonWithTooltip from "@/Components/Custom/IconButtonWithTooltip";
 import { tableCellPropsCenter } from "@/Components/Custom/CustomBoxStyles";
 import ExportCsvButton from "@/Components/Custom/ExportCsvButton";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { useAuth } from "@/Context/AuthContext";
+//import { useAuth } from "@/Context/AuthContext";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import DragAndDropArea from "../Ingreso/DragAndDropArea";
 import PreviewDialog from "@/Components/Custom/PreviewDialog";
@@ -62,7 +62,7 @@ function Traslados() {
   });
 
   const { showSnackbar } = useSnackbar();
-  const { getConfig } = useAuth();
+ // const { getConfig } = useAuth();
 
   const obtenerDatos = async () => {
     try {

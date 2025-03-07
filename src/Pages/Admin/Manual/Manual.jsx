@@ -41,11 +41,11 @@ function Manual() {
           fontWeight="bold"
           color="primary"
         >
-          Nuevo Portal para Proveedores del Grupo Tuvanosa
+          Nuevo Portal para Clientes de Operadora de Servicios Myllos
         </Typography>
         <img
-          src="/favicon_tuvanosa.svg"
-          alt="Logo Tuvanosa"
+          src="/favicon.ico"
+          alt="Myllos Logo"
           style={{
             width: "120px",
             height: "120px",
@@ -117,7 +117,7 @@ function Manual() {
                   Egresos
                 </Typography>
               }
-              secondary="En este apartado se encuentran las Facturas de Egreso (uso CFDI G02) que se tienen en el sistema de Grupo Tuvanosa. "
+              secondary="En este apartado se encuentran las Facturas de Egreso (uso CFDI G02) que se tienen en el sistema de Myllos. "
               secondaryTypographyProps={{ fontSize: "1rem", color: "#424242" }}
             />
           </ListItem>
@@ -129,7 +129,7 @@ function Manual() {
                   Gastos
                 </Typography>
               }
-              secondary="En este apartado se encuentran las Facturas de Gastos (uso CFDI G03) que se tienen en el sistema de Grupo Tuvanosa."
+              secondary="En este apartado se encuentran las Facturas de Gastos (uso CFDI G03) que se tienen en el sistema de Myllos."
               secondaryTypographyProps={{ fontSize: "1rem", color: "#424242" }}
             />
           </ListItem>
@@ -153,7 +153,7 @@ function Manual() {
                   Traslados
                 </Typography>
               }
-              secondary="En este apartado se encuentran la Facturación de servicios de Traslados y Fletes que tiene el Proveedor en el sistema de Grupo Tuvanosa."
+              secondary="En este apartado se encuentran la Facturación de servicios de Traslados y Fletes que tiene el Proveedor en el sistema de Myllos."
               secondaryTypographyProps={{ fontSize: "1rem", color: "#424242" }}
             />
           </ListItem>

@@ -29,7 +29,7 @@ import {
   Typography,
   List,
 } from "@mui/material";
-import { useAuth } from "@/Context/AuthContext";
+//import { useAuth } from "@/Context/AuthContext";
 import ConceptosIngresos from "./ConceptosIngresos";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PreviewDialog from "@/Components/Custom/PreviewDialog";
@@ -77,7 +77,7 @@ function Ingresos() {
   const [empresaSeleccionada, setEmpresaSeleccionada] = useState(0);
   const [empresas, setEmpresas] = useState([]); // Estado para almacenar empresas
   const navigate = useNavigate();
-  const { getConfig } = useAuth();
+  //const { getConfig } = useAuth();
   const [uuidOc, setUuidOc] = useState("");
   const [subTotal, setSubTotal] = useState("");
 

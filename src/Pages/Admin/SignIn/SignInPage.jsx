@@ -28,6 +28,7 @@ export default function SignInPage() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [isValidMail, setIsValidMail] = useState(false);
+  const [isValidMail2, setIsValidMail2] = useState(false);
   const [isValidPass, setIsValidPass] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -63,7 +64,7 @@ export default function SignInPage() {
   };
 
   const imagenPortada =
-    "https://firebasestorage.googleapis.com/v0/b/tvn-api-store.appspot.com/o/imagen_inicio%2FFundacionTuvanosa.webp?alt=media&token=2d9fa94f-2e5c-4b70-b202-7105fe0e0afc";
+    "https://firebasestorage.googleapis.com/v0/b/fir-adminsdk-documents.appspot.com/o/Myllos.jpg?alt=media&token=0826d865-cfb9-4b80-9477-53c669611ac4";
 
   const handleLogin = async () => {
     if (attempts >= 4) {
@@ -140,9 +141,9 @@ export default function SignInPage() {
       emailPattern.test(value) &&
       !hasSpecialChars
     ) {
-      setIsValidMail(true);
+      setIsValidMail2(true);
     } else {
-      setIsValidMail(false);
+      setIsValidMail2(false);
     }
   };
 
@@ -167,32 +168,30 @@ export default function SignInPage() {
   // Manejador de evento Submit en formulario Login
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     // Abrir el Backdrop y mostrar el spinner
     setLoading(true);
-
     try {
       const URL = import.meta.env.VITE_API_URL;
-
       const response = await axios.post(
-        `https://${URL}/WS/TuvanosaSeguridad/Api/AuthProveedor/Login`,
+        `https://${URL}/WS/TuvanosaSeguridad/Api/Login`,
         {
           correo,
           password,
         }
       );
-
+      setToken("Estoesuntokendeprueba")
       setTimeout(() => {
         if (response.status === 200) {
           setError(null);
-          setToken(response.data.token);
-          setNombreEmpleado(response.data.usuario.nombre);
+          //setToken(response.data.token);
+          //setNombreEmpleado(response.data.usuario.nombre);
         }
         setLoading(false);
         setAttempts(1);
       }, 500);
     } catch (error) {
-      setAttempts((attempts) => attempts + 1);
+      setToken("Estoesuntokendeprueba")
+      {/*setAttempts((attempts) => attempts + 1);
       // Manejo de errores
       if (error.response) {
         setLoading(false);
@@ -215,7 +214,7 @@ export default function SignInPage() {
         // Un error ocurrió al configurar la solicitud
         setError("Error al realizar la solicitud");
         setOpen(true);
-      }
+      }*/}
     }
   };
 
@@ -231,10 +230,10 @@ export default function SignInPage() {
         <Link
           sx={{ color: "#262E66", margin: "2px" }}
           color="inherit"
-          href="https://www.tuvanosa.com/inicio"
+          href="https://myllos.netlify.app"
           target="_blank"
         >
-          TUVANOSA
+          Myllos
         </Link>
         {new Date().getFullYear()}
         {"."}
@@ -303,26 +302,15 @@ export default function SignInPage() {
                 justifyContent: "center",
                 minHeight: "100vh",
                 order: { sm: 1 },
-                ...(isVotedState
-                  ? {
-                      backgroundImage:
-                        "url('https://firebasestorage.googleapis.com/v0/b/tvn-api-store.appspot.com/o/imagen_inicio%2FVotacionesAltar.webp?alt=media&token=654e3715-7783-4082-9e90-06be4fae9182')",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      zIndex: -1,
-                    }
-                  : ""),
               }}
             >
               <Box
                 component="img"
-                src="/images/TuvanosaLogo.png"
+                src="/images/myllos-logo.svg"
                 sx={{
-                  m: 1,
-                  width: { xs: 120, md: 200 },
+                  width: { xs: 180,sm:300, md: 300 },
                   height: { xs: 120, md: 200 },
-                  borderRadius: "50%",
+ 
                 }}
               />
 
@@ -344,7 +332,6 @@ export default function SignInPage() {
                     />
                     <TextField
                       placeholder="email@dominio.com"
-                      variant="standard"
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -361,7 +348,7 @@ export default function SignInPage() {
                       helperText={
                         !isValidMail && correo.length > 0
                           ? "Por favor ingrese un correo electrónico válido"
-                          : "Para ingresar al portal se hace mediante el correo electrónico con que se registro el proveedor."
+                          : "Para ingresar se hace con el correo que se uso al momento de registrarse."
                       }
                     />
                   </Box>
@@ -378,7 +365,7 @@ export default function SignInPage() {
                         shrink: true,
                       }}
                       placeholder="Introduce tu contraseña"
-                      variant="standard"
+
                       margin="normal"
                       required
                       value={password}
@@ -424,13 +411,13 @@ export default function SignInPage() {
                         borderRadius: "10px",
                         mt: 3,
                         mb: 2,
-
-                        backgroundColor: loading ? "#2e6626" : "#262E66",
+                        backgroundColor: loading ? "#3DC2CF" : "#3DC2CF",
                         "&:hover": {
                           backgroundColor: "#6977E5",
                         },
                       }}
-                    >
+                      startIcon={loading ? <CircularProgress size={20} /> : null}
+                      >
                       <Typography
                         component="h1"
                         fontSize={"16px"}
@@ -535,7 +522,7 @@ export default function SignInPage() {
                             },
                           }}
                         >
-                          <strong>Registrate</strong>
+                          <strong>Registrarse</strong>
                         </Button>
                       </Box>
                     </Grid>
@@ -549,7 +536,9 @@ export default function SignInPage() {
                       >
                         {" "}
                         Tienes algun problema? Comunícate con:{"  "}
-                        <strong>innovacion@tuvanosa.com</strong>{" "}
+                        <a href="mailto:armando.aramburo75@gmail.com">
+                        <strong>armando.aramburo75@gmail.com</strong>{" "}
+                        </a>
                       </Typography>
                     </Grid>
                     <Backdrop
@@ -576,13 +565,13 @@ export default function SignInPage() {
                     onClose={handleClose}
                     title="Ingrese su correo"
                     onSubmit={handleSubmitModalPass}
-                    submitDisabled={!isValidMail}
+                    submitDisabled={!isValidMail2}
                   >
                     {" "}
                     <form onSubmit={handleSubmitModalPass}>
                       <TextField
                         autoFocus
-                        placeholder="correo@tuvanosa.com"
+                        placeholder="correo@dominio.com"
                         margin="dense"
                         id="correo"
                         label="Correo Electrónico"
@@ -635,7 +624,7 @@ export default function SignInPage() {
             <CustomDialog
               open={openAviso}
               onClose={() => setOpenAviso(false)}
-              title="Aviso importante portal Proveedores Tuvanosa"
+              title="Aviso importante portal Clientes Myllos"
               onPdfPreview={true}
               width="md"
             >

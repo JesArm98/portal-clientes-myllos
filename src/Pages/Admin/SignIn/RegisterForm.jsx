@@ -83,9 +83,9 @@ export default function RegisterForm({ onBack }) {
       {/* Logo */}
       <Box
         component="img"
-        src="/images/TuvanosaLogo.png"
+        src="/images/myllos-logo.svg"
         sx={{
-          width: { xs: 100, md: 150 },
+          width: { xs: 180,sm:300, md: 300 },
           height: { xs: 100, md: 150 },
           borderRadius: "50%",
           mb: 2,

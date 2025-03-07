@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import CustomTable from "@/components/CustomTable";
-import { useAuth } from "@/contexts/AuthContext";
+//import { useAuth } from "@/contexts/AuthContext";
 import IconButtonWithTooltip from "@/components/IconButtonWithTooltip";
 import { tableCellPropsCenter } from "@/components/CustomBoxStyles";
 import { Box } from "@mui/material";
@@ -17,7 +17,7 @@ function ConceptosIngresos({ conceptos }) {
   const [agencias2, setAgencias2] = useState([]);
   const [PDF, setPDF] = useState("");
   const { showSnackbar } = useSnackbar();
-  const { getConfig } = useAuth();
+  //const { getConfig } = useAuth();
 
   const handleOpenXML = async (id) => {
     try {

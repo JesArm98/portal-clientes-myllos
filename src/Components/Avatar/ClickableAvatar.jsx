@@ -10,7 +10,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 export default function ClickableAvatar(props) {
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [hover, setHover] = useState(false);
-  const [nombreEmpleado, setNombreEmpleado] = useState("");
+  const [nombreEmpleado, setNombreEmpleado] = useState("Jesus Armando Estrada Aramburo");
   const [iniciales, setIniciales] = useState("");
   const navigate = useNavigate();
 

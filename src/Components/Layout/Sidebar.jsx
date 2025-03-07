@@ -24,8 +24,8 @@ const Sidebar = ({ open, onClose }) => {
   const menuItems = [
     { text: "INICIO", path: "/", icon: <HomeIcon /> },
     {
-      text: "COMPLEMENTOS",
-      path: "/complementos",
+      text: "DIRECCIONES",
+      path: "/direcciones",
       icon: <ReceiptLongIcon />,
     },
     { text: "EGRESOS", path: "/egresos", icon: <CreditScoreIcon /> },

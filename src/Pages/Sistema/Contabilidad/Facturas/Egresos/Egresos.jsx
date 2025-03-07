@@ -7,7 +7,7 @@ import IconButtonWithTooltip from "@/Components/Custom/IconButtonWithTooltip";
 import { tableCellPropsCenter } from "@/Components/Custom/CustomBoxStyles";
 import ExportCsvButton from "@/Components/Custom/ExportCsvButton";
 import { Box, Button } from "@mui/material";
-import { useAuth } from "@/Context/AuthContext";
+//import { useAuth } from "@/Context/AuthContext";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PreviewDialog from "@/Components/Custom/PreviewDialog";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -31,7 +31,7 @@ function Egresos() {
   const [PDF, setPDF] = useState("");
   const [openPDF, setOpenPDF] = useState(false);
   const navigate = useNavigate();
-  const { getConfig } = useAuth();
+  //const { getConfig } = useAuth();
 
   useEffect(() => {
     const obtenerDatos = async () => {

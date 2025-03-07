@@ -19,7 +19,7 @@ const router = createBrowserRouter(
       element: <Layout />,
       children: [
         { index: true, element: <Manual /> },
-        { path: "complementos", element: <ComplementosFacturas /> },
+        { path: "direcciones", element: <ComplementosFacturas /> },
         { path: "egresos", element: <Egresos /> },
         { path: "gastos", element: <Gastos /> },
         { path: "ingresos", element: <Ingresos /> },

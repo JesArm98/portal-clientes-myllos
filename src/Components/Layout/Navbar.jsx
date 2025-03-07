@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom"; // 🔥 Hook para obtener la rut
 import { useEffect, useState } from "react";
 
 const Navbar = ({ onMenuClick, isSidebarOpen }) => {
-  const [nombreEmpleado, setNombreEmpleado] = useState("");
+  const [nombreEmpleado, setNombreEmpleado] = useState("Jesus Armando Estrada Aramburo");
   const location = useLocation(); // 🔥 Obtener la ubicación actual (ruta)
 
   // Función para convertir la ruta a un nombre amigable
@@ -32,6 +32,7 @@ const Navbar = ({ onMenuClick, isSidebarOpen }) => {
     <AppBar
       position="fixed"
       sx={{
+        backgroundColor:"#3DC2CF",
         overflow: "hidden",
         boxShadow: "0 4px 12px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.08)",
         zIndex: 1201, // 🔥 Asegura que esté por encima del Sidebar
