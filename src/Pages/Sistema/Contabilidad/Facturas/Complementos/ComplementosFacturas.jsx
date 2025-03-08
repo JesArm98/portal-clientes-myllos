@@ -52,7 +52,7 @@ function ComplementosFacturas() {
   const [verificacionDataConOC, setVerificacionDataConOC] = useState(null);
   const { showSnackbar } = useSnackbar();
   const [isMobile] = useState(window.innerWidth <= 600);
-  const [agencias, setAgencias] = useState([]);
+ // const [agencias, setAgencias] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [conceptosDialogOpen, setConceptosDialogOpen] = useState(false);
   const [PDF, setPDF] = useState("");
@@ -66,6 +66,8 @@ function ComplementosFacturas() {
   const [openAddressDialog, setOpenAddressDialog] = useState(false);
 const [addressFormData, setAddressFormData] = useState(null);
 const [isEditingAddress, setIsEditingAddress] = useState(false);
+
+console.log(addressFormData)
 
   const navigate = useNavigate();
  // const { getConfig } = useAuth();
@@ -172,14 +174,14 @@ const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   const getBackgroundColor = (status) => {
     if (status === true || status === "Cargada") return "#2e7d32";
-    if (status === false) return "#d32f2f";
+    if (status === false) return "#2196F3";
     return "#9e9e9e";
   };
 
   const columns = [
     {
-      accessorKey: "descrEstatusSap",
-      header: "ESTATUS",
+      accessorKey: "isPrimary",
+      header: "Principal",
       ...tableCellPropsCenter,
       Cell: ({ cell }) => {
         const status = cell.getValue() ?? ""; // Protección para valores nulos
@@ -199,171 +201,140 @@ const [isEditingAddress, setIsEditingAddress] = useState(false);
               p: "0.2rem",
             }}
           >
-            {status.toUpperCase()}
+            {status === true ? "PRINCIPAL" : "ADICIONAL"}
           </Box>
         );
       },
     },
     {
-      accessorKey: "estatusSat",
-      header: "ESTATUS SAT",
-      ...tableCellPropsCenter,
-      Cell: ({ cell }) => {
-        const status = cell.getValue() ?? ""; // Protección para valores nulos
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              margin: "auto",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#FFFFFF",
-              borderRadius: "4px",
-              border: `1px solid ${getBackgroundColor(status)}`,
-              color: getBackgroundColor(status),
-              fontWeight: "bold",
-              width: "120px",
-              p: "0.2rem",
-            }}
-          >
-            {status === true
-              ? "VIGENTE"
-              : status === false
-              ? "CANCELADA"
-              : "ERROR"}
-          </Box>
-        );
-      },
-    },
-    {
-      accessorKey: "uuid",
-      header: "UUID",
+      accessorKey: "id",
+      header: "ID DIRECCION",
       ...tableCellPropsCenter,
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
     },
     {
-      accessorKey: "facturaDto.Fecha",
-      header: "Fecha factura",
-      Cell: ({ cell }) => {
-        const rawDate = cell.getValue() ?? ""; // Protección contra nulos
-        if (!rawDate) return "";
-        const date = new Date(rawDate);
-        return date.toLocaleDateString("es-ES", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
-      },
-      ...tableCellPropsCenter,
-    },
-    {
-      accessorKey: "facturaDto.Folio",
-      header: "Folio",
+      accessorKey: "addressType",
+      header: "TIPO DIRECCIÓN",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.Emisor.Rfc",
-      header: "RFC Emisor",
+      accessorKey: "zipCode",
+      header: "CODIGO POSTAL",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.Emisor.Nombre",
-      header: "Nombre Emisor",
+      accessorKey: "state",
+      header: "Estado",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.Emisor.RegimenFiscal",
-      header: "Regimen Emisor",
-      Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
-      ...tableCellPropsCenter,
-    },
-
-    {
-      accessorKey: "facturaDto.Receptor.Rfc",
-      header: "RFC Receptor",
+      accessorKey: "city",
+      header: "CIUDAD",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.Receptor.Nombre",
-      header: "Nombre Receptor",
+      accessorKey: "colony",
+      header: "COLONIA",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.Receptor.UsoCFDI",
-      header: "Uso CFDI",
+      accessorKey: "street",
+      header: "CALLE",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.TipoDeComprobante",
-      header: "Tipo C",
-      Cell: ({ cell }) => {
-        const value = cell.getValue() ?? "";
-        if (value === "P") return `Complemento Pago`;
-        else return "Invalido";
-      },
-      ...tableCellPropsCenter,
-    },
-    {
-      accessorKey: "facturaDto.SubTotal",
-      header: "SubTotal",
-      Cell: ({ cell }) => {
-        const value = cell.getValue() ?? 0; // Protección contra valores nulos
-        return new Intl.NumberFormat("es-MX", {
-          style: "currency",
-          currency: "MXN",
-        }).format(value);
-      },
-      ...tableCellPropsCenter,
-    },
-    {
-      accessorKey: "facturaDto.Impuestos.TotalImpuestosTrasladados",
-      header: "Impuestos traslados",
-      Cell: ({ cell }) => {
-        const value = cell.getValue() ?? 0; // Protección contra valores nulos
-        return new Intl.NumberFormat("es-MX", {
-          style: "currency",
-          currency: "MXN",
-        }).format(value);
-      },
-      ...tableCellPropsCenter,
-    },
-    {
-      accessorKey: "facturaDto.Total",
-      header: "Total",
-      Cell: ({ cell }) => {
-        const value = cell.getValue() ?? 0; // Protección contra valores nulos
-        return new Intl.NumberFormat("es-MX", {
-          style: "currency",
-          currency: "MXN",
-        }).format(value);
-      },
-      ...tableCellPropsCenter,
-    },
-    {
-      accessorKey: "facturaDto.Moneda",
-      header: "Moneda",
+      accessorKey: "number",
+      header: "NO. EXTERIOR",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "descrEmpl",
-      header: "Responsable",
+      accessorKey: "interior",
+      header: "NO. INTERIOR",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
     {
-      accessorKey: "facturaDto.Version",
-      header: "Versión",
+      accessorKey: "reference",
+      header: "REFERENCIAS",
       Cell: ({ cell }) => cell.getValue() ?? "", // Protección contra valores nulos
       ...tableCellPropsCenter,
     },
   ];
+
+  const agencias = [
+    {
+      "id": "addr-001",
+      "street": "Paseo de la Reforma",
+      "number": "222",
+      "interior": "5B",
+      "colony": "Juárez",
+      "city": "Ciudad de México",
+      "state": "Ciudad de México",
+      "zipCode": "06600",
+      "addressType": "fiscal",
+      "isPrimary": true,
+      "reference": "Edificio gris con cristales, cerca del Ángel de la Independencia"
+    },
+    {
+      "id": "addr-002",
+      "street": "Av. Insurgentes Sur",
+      "number": "1602",
+      "interior": "",
+      "colony": "Crédito Constructor",
+      "city": "Ciudad de México",
+      "state": "Ciudad de México",
+      "zipCode": "03940",
+      "addressType": "office",
+      "isPrimary": false,
+      "reference": "Frente a la estación de metrobús Ciudad de los Deportes"
+    },
+    {
+      "id": "addr-003",
+      "street": "Calzada de Tlalpan",
+      "number": "1924",
+      "interior": "Local 3",
+      "colony": "Country Club",
+      "city": "Ciudad de México",
+      "state": "Ciudad de México",
+      "zipCode": "04220",
+      "addressType": "delivery",
+      "isPrimary": false,
+      "reference": "Entre Avenida San Fernando y calle Ayuntamiento"
+    },
+    {
+      "id": "addr-004",
+      "street": "Boulevard Manuel Ávila Camacho",
+      "number": "5",
+      "interior": "Piso 9",
+      "colony": "Lomas de Chapultepec",
+      "city": "Ciudad de México",
+      "state": "Ciudad de México",
+      "zipCode": "11000",
+      "addressType": "billing",
+      "isPrimary": false,
+      "reference": "Torre Polanco, frente al Parque de Chapultepec"
+    },
+    {
+      "id": "addr-005",
+      "street": "Av. Universidad",
+      "number": "1200",
+      "interior": "",
+      "colony": "Del Valle",
+      "city": "Ciudad de México",
+      "state": "Ciudad de México",
+      "zipCode": "03100",
+      "addressType": "delivery",
+      "isPrimary": false,
+      "reference": "Cerca del Centro Comercial Coyoacán"
+    }
+  ]
 
   const handleFileUpload = async (event) => {
     const files = Array.from(event.target.files);
@@ -546,12 +517,14 @@ const [isEditingAddress, setIsEditingAddress] = useState(false);
               }}
             >
               <>
-                <IconButtonWithTooltip
-                  tooltipTitle="Visualizar facturas del complemento"
-                  iconColor="#2196F3"
-                  IconComponent={<SourceIcon />}
-                  onIconClick={() => handleOpenConceptos(row.original.id)}
-                />
+              {/*
+               <IconButtonWithTooltip
+ //                 tooltipTitle="Visualizar facturas del complemento"
+ //                 iconColor="#2196F3"
+ //                 IconComponent={<SourceIcon />}
+ //                 onIconClick={() => handleOpenConceptos(row.original.id)}
+ //               />
+ */}
 
                 <IconButtonWithTooltip
                   tooltipTitle="Visualizar PDF"
@@ -622,7 +595,7 @@ const [isEditingAddress, setIsEditingAddress] = useState(false);
   onSubmit={handleSubmitAddress}
   initialValues={addressFormData}
   isEditing={isEditingAddress}
-  title={isEditingAddress ? "Editar Dirección" : "Registro de Direcciones"}
+  title={isEditingAddress ? "Editar Dirección" : "Registro de Dirección"}
 />
 
       {/* PDF DIALOG */}

@@ -18,11 +18,12 @@ const AddressDialog = ({
   onSubmit,
   initialValues = null,
   isEditing = false,
-  title = "Registro de Direcciones"
+  title = ""
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (data) => {
+    {console.log(data)}
     setIsSubmitting(true);
     try {
       await onSubmit(data);

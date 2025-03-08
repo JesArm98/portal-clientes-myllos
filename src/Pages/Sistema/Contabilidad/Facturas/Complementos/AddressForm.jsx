@@ -81,9 +81,6 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
 
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate sx={{ mt: 1 }}>
-      <Typography variant="h6" gutterBottom>
-        {isEditing ? "Editar Dirección" : "Registrar Nueva Dirección"}
-      </Typography>
       
       <Grid container spacing={2}>
         {/* Street */}

@@ -28,10 +28,10 @@ const Sidebar = ({ open, onClose }) => {
       path: "/direcciones",
       icon: <ReceiptLongIcon />,
     },
-    { text: "EGRESOS", path: "/egresos", icon: <CreditScoreIcon /> },
-    { text: "GASTOS", path: "/gastos", icon: <LocalGasStationIcon /> },
-    { text: "INGRESOS", path: "/ingresos", icon: <LocalAtmIcon /> },
-    { text: "TRASLADOS", path: "/traslados", icon: <LocalShippingIcon /> },
+    //{ text: "EGRESOS", path: "/egresos", icon: <CreditScoreIcon /> },
+    //{ text: "GASTOS", path: "/gastos", icon: <LocalGasStationIcon /> },
+    //{ text: "INGRESOS", path: "/ingresos", icon: <LocalAtmIcon /> },
+    //{ text: "TRASLADOS", path: "/traslados", icon: <LocalShippingIcon /> },
   ];
 
   const handleNavigation = (path) => {
