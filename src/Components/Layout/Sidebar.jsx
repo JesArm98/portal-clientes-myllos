@@ -22,11 +22,11 @@ const Sidebar = ({ open, onClose }) => {
 
   // Definir las rutas y los iconos
   const menuItems = [
-    { text: "INICIO", path: "/", icon: <HomeIcon /> },
+    { text: "INICIO", path: "/", icon: <HomeIcon sx={{color:"#3DC2CF"}}  /> },
     {
       text: "DIRECCIONES",
       path: "/direcciones",
-      icon: <ReceiptLongIcon />,
+      icon: <ReceiptLongIcon sx={{color:"#3DC2CF"}} />,
     },
     //{ text: "EGRESOS", path: "/egresos", icon: <CreditScoreIcon /> },
     //{ text: "GASTOS", path: "/gastos", icon: <LocalGasStationIcon /> },

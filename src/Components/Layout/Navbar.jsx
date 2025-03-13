@@ -32,7 +32,7 @@ const Navbar = ({ onMenuClick, isSidebarOpen }) => {
     <AppBar
       position="fixed"
       sx={{
-        backgroundColor:"#3DC2CF",
+        backgroundColor:"#000",
         overflow: "hidden",
         boxShadow: "0 4px 12px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.08)",
         zIndex: 1201, // 🔥 Asegura que esté por encima del Sidebar

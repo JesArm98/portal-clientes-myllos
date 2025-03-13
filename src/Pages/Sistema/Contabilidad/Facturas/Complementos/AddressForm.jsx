@@ -1,76 +1,152 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import axios from "axios";
 import {
   Box,
   Button,
   TextField,
   Grid,
   Typography,
-  MenuItem,
-  FormHelperText,
-  FormControl,
-  InputLabel,
-  Select,
+  Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 
 // Validation schema using yup
 const addressSchema = yup.object({
-  street: yup.string().required("La calle es requerida"),
-  number: yup.string().required("El número es requerido"),
-  colony: yup.string().required("La colonia es requerida"),
-  city: yup.string().required("La ciudad es requerida"),
-  state: yup.string().required("El estado es requerido"),
-  zipCode: yup
+  calle: yup.string().required("La calle es requerida"),
+  numeroExterior: yup.string().required("El número es requerido"),
+  colonia: yup.string().required("La colonia es requerida"),
+  ciudad: yup.string().required("La ciudad es requerida"),
+  estado: yup.string().required("El estado es requerido"),
+  cp: yup
     .string()
     .required("El código postal es requerido")
     .matches(/^\d{5}$/, "El código postal debe tener 5 dígitos"),
-  addressType: yup.string().required("El tipo de dirección es requerido"),
-  isPrimary: yup.boolean().default(false),
 });
 
-// List of Mexican states
-const mexicanStates = [
-  "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas",
-  "Chihuahua", "Coahuila", "Colima", "Ciudad de México", "Durango", "Estado de México",
-  "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "Michoacán", "Morelos", "Nayarit",
-  "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí",
-  "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
-];
-
-// Address types
-const addressTypes = [
-  { value: "fiscal", label: "Fiscal" },
-  { value: "delivery", label: "Entrega" },
-  { value: "billing", label: "Facturación" },
-  { value: "office", label: "Oficina" },
-];
-
 const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
+  // Estado para almacenar las colonias disponibles según el CP
+  const [colonies, setColonies] = useState([]);
+  // Estado para manejar la carga de datos
+  const [loading, setLoading] = useState(false);
+  // Estado para manejar errores de API
+  const [apiError, setApiError] = useState(null);
+  // Estado para almacenar los datos completos de la colonia seleccionada
+  const [selectedColonyData, setSelectedColonyData] = useState(null);
+  // Estado para almacenar los datos completos de la API
+  const [apiData, setApiData] = useState([]);
+
   // Ensure initialValues is not null or undefined
   const safeInitialValues = initialValues || {};
   
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid},
     reset,
+    setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(addressSchema),
     defaultValues: {
-      street: safeInitialValues.street || "",
-      number: safeInitialValues.number || "",
-      interior: safeInitialValues.interior || "",
-      colony: safeInitialValues.colony || "",
-      city: safeInitialValues.city || "",
-      state: safeInitialValues.state || "",
-      zipCode: safeInitialValues.zipCode || "",
-      addressType: safeInitialValues.addressType || "",
-      isPrimary: safeInitialValues.isPrimary || false,
-      reference: safeInitialValues.reference || "",
+      calle: safeInitialValues.calle || "",
+      numeroExterior: safeInitialValues.numeroExterior || "",
+      numeroInterior: safeInitialValues.numeroInterior || "",
+      colonia: safeInitialValues.colonia || "",
+      ciudad: safeInitialValues.ciudad || "",
+      estado: safeInitialValues.estado || "",
+      cp: safeInitialValues.cp || "",
+      referencia: safeInitialValues.referencia || "",
+      pais: safeInitialValues.pais || "",
     },
+    mode: "onChange", // Esto es importante para que isValid se actualice en tiempo real
   });
+
+  // Observar cambios en el código postal
+  const cp = watch("cp");
+  // Observar cambios en la colonia seleccionada
+  const selectedColony = watch("colonia");
+
+  // Efecto para obtener datos cuando cambia el código postal
+  useEffect(() => {
+    const fetchDataByZipCode = async (value) => {
+      if (value && value.length === 5) {
+        setLoading(true);
+        setApiError(null);
+        
+        try {
+          const response = await axios.get(`https://api.pktuno.mx/Api/Cobertura/${value}`);
+          
+          // Verificar si la respuesta contiene datos
+          if (response.data) {
+            console.log("API Response:", response.data);
+            
+            // Si es un array, procesamos las colonias
+            if (Array.isArray(response.data) && response.data.length > 0) {
+              // Guardar los datos completos de la API
+              setApiData(response.data);
+              
+              // Extraer solo los nombres de las colonias para el Autocomplete
+              const coloniasList = response.data.map(item => item.colonia).filter(Boolean);
+              setColonies(coloniasList);
+              
+              // Autocompletar ciudad, estado y país con los datos del primer elemento
+              // (todos deberían tener los mismos valores para estos campos)
+              if (response.data[0]) {
+                setValue("ciudad", response.data[0].ciudad || "");
+                setValue("estado", response.data[0].estado || "");
+                setValue("pais", response.data[0].pais || "");
+              }
+            } else if (response.data.colonia) {
+              // Si es un objeto único con datos de colonia
+              setApiData([response.data]);
+              setColonies([response.data.colonia]);
+              setValue("ciudad", response.data.ciudad || "");
+              setValue("estado", response.data.estado || "");
+              setValue("pais", response.data.pais || "");
+            } else {
+              setApiError("No se encontraron colonias en la respuesta");
+              setColonies([]);
+              setApiData([]);
+            }
+          } else {
+            setApiError("No se encontraron datos para este código postal");
+            setColonies([]);
+            setApiData([]);
+          }
+        } catch (error) {
+          console.error("Error fetching zip code data:", error);
+          setApiError("Error al consultar el código postal. Inténtelo de nuevo o verifique que sea correcto.");
+          setColonies([]);
+          setApiData([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setColonies([]);
+        setApiData([]);
+      }
+    };
+
+    fetchDataByZipCode(cp);
+  }, [cp, setValue]);
+
+  // Efecto para actualizar los datos cuando se selecciona una colonia
+  useEffect(() => {
+    if (selectedColony && apiData.length > 0) {
+      // Buscar los datos completos de la colonia seleccionada
+      const colonyData = apiData.find(item => item.colonia === selectedColony);
+      if (colonyData) {
+        setSelectedColonyData(colonyData);
+        // Actualizar ciudad, estado y país basados en la colonia seleccionada
+        setValue("ciudad", colonyData.ciudad || "");
+        setValue("estado", colonyData.estado || "");
+        setValue("pais", colonyData.pais || "");
+      }
+    }
+  }, [selectedColony, apiData, setValue]);
 
   const handleFormSubmit = (data) => {
     onSubmit(data);
@@ -79,22 +155,110 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
     }
   };
 
+  const inputStyles = {
+    borderRadius: "20px", // Bordes redondeados
+    backgroundColor: "#fff", // Fondo blanco para mejor visibilidad
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "20px", // Aplica a todo el input
+      fontSize: "16px",
+      fontWeight: 500,
+      "& fieldset": {
+        borderColor: "#BDBDBD", // Color de borde en estado normal
+      },
+      "&:hover fieldset": {
+        borderColor: "#1976d2", // Color de borde en hover
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#1976d2", // Color de borde cuando está enfocado
+        boxShadow: "0px 0px 6px rgba(25, 118, 210, 0.3)", // Sombra al enfocar
+      },
+    },
+
+  };
+
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate sx={{ mt: 1 }}>
+      {apiError && (
+        <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+          {apiError}
+        </Typography>
+      )}
       
       <Grid container spacing={2}>
-        {/* Street */}
+        {/* Zip Code - First field to enable auto-completion */}
         <Grid item xs={12} md={6}>
           <Controller
-            name="street"
+            name="cp"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Calle"
+                label="Código Postal"
                 fullWidth
-                error={!!errors.street}
-                helperText={errors.street?.message}
+                required
+                error={!!errors.cp}
+                helperText={errors.cp?.message}
+                sx={inputStyles}
+                InputProps={{
+                  endAdornment: loading ? <CircularProgress color="inherit" size={20} /> : null,
+                }}
+              />
+            )}
+          />
+        </Grid>
+
+        {/* Colony - Autocomplete based on ZIP code */}
+        <Grid item xs={12} md={6}>
+          <Controller
+            name="colonia"
+            control={control}
+            render={({ field }) => (
+              <Autocomplete
+                {...field}
+                options={colonies}
+                loading={loading}
+                value={field.value || null}
+                onChange={(_, newValue) => field.onChange(newValue)}
+                disabled={colonies.length === 0}
+                fullWidth
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Colonia"
+                    sx={inputStyles}
+                    required
+                    error={!!errors.colonia}
+                    helperText={errors.colonia?.message || (colonies.length === 0 && cp?.length === 5 ? "Ingrese un código postal válido primero" : "")}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            )}
+          />
+        </Grid>
+
+        {/* Street */}
+        <Grid item xs={12} md={6}>
+          <Controller
+            name="calle"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                required
+                label="Calle"
+                sx={inputStyles}
+                fullWidth
+                error={!!errors.calle}
+                helperText={errors.calle?.message}
               />
             )}
           />
@@ -103,15 +267,17 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
         {/* Number */}
         <Grid item xs={6} md={3}>
           <Controller
-            name="number"
+            name="numeroExterior"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
+                sx={inputStyles}
+                required
                 label="Número Exterior"
                 fullWidth
-                error={!!errors.number}
-                helperText={errors.number?.message}
+                error={!!errors.numeroExterior}
+                helperText={errors.numeroExterior?.message}
               />
             )}
           />
@@ -120,11 +286,12 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
         {/* Interior Number (optional) */}
         <Grid item xs={6} md={3}>
           <Controller
-            name="interior"
+            name="numeroInterior"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
+                sx={inputStyles}
                 label="Número Interior"
                 fullWidth
                 helperText="Opcional"
@@ -133,128 +300,69 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
           />
         </Grid>
 
-        {/* Colony */}
-        <Grid item xs={12} md={6}>
+        {/* City - Auto-filled from API */}
+        <Grid item xs={12} md={4}>
           <Controller
-            name="colony"
+            name="ciudad"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Colonia"
-                fullWidth
-                error={!!errors.colony}
-                helperText={errors.colony?.message}
-              />
-            )}
-          />
-        </Grid>
-
-        {/* Zip Code */}
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="zipCode"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Código Postal"
-                fullWidth
-                error={!!errors.zipCode}
-                helperText={errors.zipCode?.message}
-              />
-            )}
-          />
-        </Grid>
-
-        {/* City */}
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="city"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
+                sx={inputStyles}
                 label="Ciudad"
+                required
                 fullWidth
-                error={!!errors.city}
-                helperText={errors.city?.message}
+                error={!!errors.ciudad}
+                helperText={errors.ciudad?.message}
+                InputProps={{
+                  readOnly: true,
+                }}
+                disabled
               />
             )}
           />
         </Grid>
 
-        {/* State */}
-        <Grid item xs={12} md={6}>
-          <FormControl fullWidth error={!!errors.state}>
-            <InputLabel id="state-label">Estado</InputLabel>
-            <Controller
-              name="state"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="state-label"
-                  label="Estado"
-                >
-                  {mexicanStates.map((state) => (
-                    <MenuItem key={state} value={state}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-            {errors.state && (
-              <FormHelperText>{errors.state.message}</FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-
-        {/* Address Type */}
-        <Grid item xs={12} md={6}>
-          <FormControl fullWidth error={!!errors.addressType}>
-            <InputLabel id="address-type-label">Tipo de Dirección</InputLabel>
-            <Controller
-              name="addressType"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="address-type-label"
-                  label="Tipo de Dirección"
-                >
-                  {addressTypes.map((type) => (
-                    <MenuItem key={type.value} value={type.value}>
-                      {type.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-            {errors.addressType && (
-              <FormHelperText>{errors.addressType.message}</FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-
-        {/* Is Primary */}
-        <Grid item xs={12} md={6}>
+        {/* State - Auto-filled from API */}
+        <Grid item xs={12} md={4}>
           <Controller
-            name="isPrimary"
+            name="estado"
             control={control}
             render={({ field }) => (
-              <FormControl fullWidth>
-                <InputLabel id="is-primary-label">Dirección Principal</InputLabel>
-                <Select
-                  {...field}
-                  labelId="is-primary-label"
-                  label="Dirección Principal"
-                >
-                  <MenuItem value={true}>Sí</MenuItem>
-                  <MenuItem value={false}>No</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                {...field}
+                sx={inputStyles}
+                label="Estado"
+                fullWidth
+                required
+                disabled
+                error={!!errors.estado}
+                helperText={errors.estado?.message}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            )}
+          />
+        </Grid>
+
+        {/* Country - Auto-filled from API */}
+        <Grid item xs={12} md={4}>
+          <Controller
+            name="pais"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                sx={inputStyles}
+                label="País"
+                fullWidth
+                required
+                disabled
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
             )}
           />
         </Grid>
@@ -262,16 +370,17 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
         {/* Reference (optional) */}
         <Grid item xs={12}>
           <Controller
-            name="reference"
+            name="referencia"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
+                sx={inputStyles}
                 label="Referencias"
                 fullWidth
                 multiline
                 rows={2}
-                helperText="Opcional - Añada referencias para facilitar la ubicación"
+                helperText="Añada referencias para facilitar la ubicación"
               />
             )}
           />
@@ -280,16 +389,15 @@ const AddressForm = ({ onSubmit, initialValues = {}, isEditing = false }) => {
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, gap: 2 }}>
         <Button
-          variant="outlined"
           onClick={() => reset()}
-          color="secondary"
+          color="error"
         >
           Cancelar
         </Button>
         <Button
           type="submit"
-          variant="contained"
-          color="primary"
+          sx={{border:"1px solid #3DC2CF", borderRadius:"20px", color:"#3DC2CF"}}
+          disabled={!isValid}
         >
           {isEditing ? "Actualizar" : "Guardar"}
         </Button>

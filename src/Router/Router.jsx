@@ -1,5 +1,5 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Layout from "../components/Layout/Layout";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import DashboardLayout from "../components/Layout/DashboardLayout"; // Import the new dashboard layout
 import Error500Page from "../Pages/errorPages/500/Error500Page";
 import NewPassPage from "../Pages/Admin/NewPassPage";
 import MatchPass from "../Pages/Admin/MatchPass/MatchPass";
@@ -16,14 +16,15 @@ const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: <Layout />,
+      element: <DashboardLayout />, // Use the new DashboardLayout instead of Layout
       children: [
         { index: true, element: <Manual /> },
         { path: "direcciones", element: <ComplementosFacturas /> },
-      //  { path: "egresos", element: <Egresos /> },
-      //  { path: "gastos", element: <Gastos /> },
-      //  { path: "ingresos", element: <Ingresos /> },
-      //  { path: "traslados", element: <Traslados /> },
+        // Uncomment these routes when needed
+        // { path: "egresos", element: <Egresos /> },
+        // { path: "gastos", element: <Gastos /> },
+        // { path: "ingresos", element: <Ingresos /> },
+        // { path: "traslados", element: <Traslados /> },
       ],
     },
     { path: "/500", element: <Error500Page /> },
