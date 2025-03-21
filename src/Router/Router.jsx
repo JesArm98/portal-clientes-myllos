@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import DashboardLayout from "../Components/Layout/DashboardLayout";// Import the new dashboard layout
+import DashboardLayout from "../Components/Layout/DashboardLayout"; // Import the new dashboard layout
 import Error500Page from "../Pages/errorPages/500/Error500Page";
 import NewPassPage from "../Pages/Admin/NewPassPage";
 import MatchPass from "../Pages/Admin/MatchPass/MatchPass";
 import NotFound from "../Pages/errorPages/400/NotFound404";
 import SignInPage from "../Pages/Admin/SignIn/SignInPage";
-import ComplementosFacturas from "../Pages/Sistema/Contabilidad/Facturas/Complementos/ComplementosFacturas";
-import Cotizaciones from "../Pages/Sistema/Contabilidad/Facturas/Cotizaciones/Cotizaciones"
+import Direcciones from "../Pages/Sistema/Contabilidad/Facturas/Direcciones/Direcciones";
+import Cotizaciones from "../Pages/Sistema/Contabilidad/Facturas/Cotizaciones/Cotizaciones";
 import Manual from "../Pages/Admin/Manual/Manual";
 
 const router = createBrowserRouter(
@@ -16,7 +16,7 @@ const router = createBrowserRouter(
       element: <DashboardLayout />, // Use the new DashboardLayout instead of Layout
       children: [
         { index: true, element: <Manual /> },
-        { path: "direcciones", element: <ComplementosFacturas /> },
+        { path: "direcciones", element: <Direcciones /> },
         { path: "cotizaciones", element: <Cotizaciones /> },
       ],
     },

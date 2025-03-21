@@ -3,8 +3,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
   IconButton,
   Typography,
   Box,
@@ -18,12 +16,14 @@ const AddressDialog = ({
   onSubmit,
   initialValues = null,
   isEditing = false,
-  title = ""
+  title = "",
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (data) => {
-    {console.log(data)}
+    {
+      console.log(data);
+    }
     setIsSubmitting(true);
     try {
       await onSubmit(data);
@@ -36,8 +36,8 @@ const AddressDialog = ({
   };
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       fullWidth
       maxWidth="md"
@@ -47,20 +47,16 @@ const AddressDialog = ({
       <DialogTitle id="address-dialog-title">
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">{title}</Typography>
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            edge="end"
-          >
+          <IconButton aria-label="close" onClick={onClose} edge="end">
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
       <DialogContent dividers>
-        <AddressForm 
-          onSubmit={handleSubmit} 
-          initialValues={initialValues || {}} 
-          isEditing={isEditing} 
+        <AddressForm
+          onSubmit={handleSubmit}
+          initialValues={initialValues || {}}
+          isEditing={isEditing}
         />
       </DialogContent>
     </Dialog>
