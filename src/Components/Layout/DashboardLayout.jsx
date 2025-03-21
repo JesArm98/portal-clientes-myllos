@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   Box,
@@ -79,8 +79,8 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Check authentication
-  useState(() => {
+  // Reemplazamos useState por useEffect
+  useEffect(() => {
     const token = localStorage.getItem("token");
     
     if (!token) {
@@ -88,15 +88,20 @@ export default function DashboardLayout() {
         navigate("/sign-in");
       }
     }
-    
+
     setIsCheckingAuth(false);
 
-    // Get employee name from localStorage
+    // Obtener el nombre del empleado desde localStorage
     const storedName = localStorage.getItem("nombreEmpleado");
     if (storedName) {
       setNombreEmpleado(storedName);
     }
   }, [navigate, location.pathname]);
+
+  // Bloquear la renderización hasta que se verifique la autenticación
+  if (isCheckingAuth || (!localStorage.getItem("token") && location.pathname !== "/sign-in")) {
+    return null;
+  }
 
   const toggleDrawer = () => {
     setOpen(!open);

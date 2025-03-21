@@ -7,13 +7,15 @@ import {
   ListSubheader,
   Tooltip
 } from '@mui/material';
+
 import {
   Home as HomeIcon,
   Receipt as ReceiptLongIcon,
   CreditScore as CreditScoreIcon,
   LocalGasStation as LocalGasStationIcon,
   LocalAtm as LocalAtmIcon,
-  LocalShipping as LocalShippingIcon
+  LocalShipping as LocalShippingIcon,
+  RequestQuote as CotizacionIcon
 } from '@mui/icons-material';
 
 // Main menu items
@@ -44,6 +46,24 @@ export const mainListItems = (
         </ListItemIcon>
         <ListItemText 
           primary="DIRECCIONES"
+          sx={{
+            textAlign: "left",
+            "& .MuiTypography-root": {
+              fontWeight: "bold",
+              color: "white"
+            },
+          }}
+        />
+      </ListItemButton>
+    </Tooltip>
+
+    <Tooltip title="Gestión de Cotizaciones" placement="right" arrow>
+      <ListItemButton component={RouterLink} to="/cotizaciones">
+        <ListItemIcon>
+          <CotizacionIcon sx={{color:"#3DC2CF"}} />
+        </ListItemIcon>
+        <ListItemText 
+          primary="COTIZACIONES"
           sx={{
             textAlign: "left",
             "& .MuiTypography-root": {

@@ -28,6 +28,11 @@ const Sidebar = ({ open, onClose }) => {
       path: "/direcciones",
       icon: <ReceiptLongIcon sx={{color:"#3DC2CF"}} />,
     },
+    {
+      text: "COTIZACIONES",
+      path: "/cotizaciones",
+      icon: <ReceiptLongIcon sx={{color:"#3DC2CF"}} />,
+    },
     //{ text: "EGRESOS", path: "/egresos", icon: <CreditScoreIcon /> },
     //{ text: "GASTOS", path: "/gastos", icon: <LocalGasStationIcon /> },
     //{ text: "INGRESOS", path: "/ingresos", icon: <LocalAtmIcon /> },
